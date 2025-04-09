@@ -1,0 +1,24 @@
+version: '3.3'
+
+services:
+   corkiescoyotes-db:
+     image: mysql:5.7
+     command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+     volumes:
+         - ./docker/provision/mysql/init:/docker-entrypoint-initdb.d
+     environment:
+       MYSQL_ROOT_PASSWORD: local
+
+   corkiescoyotes-wp:
+     depends_on:
+       - corkiescoyotes-db
+     image: wordpress:latest
+     ports:
+       - "9096:80"
+     #disable_ipv6: 'true'
+     restart: always
+     environment:
+       WORDPRESS_DB_HOST: corkiescoyotes_corkiescoyotes-db_1:3306
+       WORDPRESS_DB_USER: local1
+       WORDPRESS_DB_PASSWORD: local
+       WORDPRESS_DB_NAME: primary

@@ -1,0 +1,24 @@
+version: '3.3'
+
+services:
+   poochpay-db:
+     image: mysql:5.7
+     command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+     volumes:
+         - ./docker/provision/mysql/init:/docker-entrypoint-initdb.d
+     environment:
+       MYSQL_ROOT_PASSWORD: local
+
+   poochpay-wp:
+     depends_on:
+       - poochpay-db
+     image: wordpress:latest
+     ports:
+       - "9093:80"
+     #disable_ipv6: 'true'
+     restart: always
+     environment:
+       WORDPRESS_DB_HOST: poochpay-poochpay-db-1:3306
+       WORDPRESS_DB_USER: root
+       WORDPRESS_DB_PASSWORD: local
+       WORDPRESS_DB_NAME: primary
